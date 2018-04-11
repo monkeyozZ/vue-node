@@ -1,0 +1,1 @@
+export const MENU_TAGGLE = 'MENU_TAGGLE'
