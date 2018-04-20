@@ -24,5 +24,4 @@ export default {
 .footer
   line-height 40px
   text-align center
-  border-top 1px solid #eee
 </style>

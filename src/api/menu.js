@@ -1,10 +1,10 @@
 import request from '@/utils/request'
-const login = async (obj) => {
+const MenuInsert = async (obj) => {
   const data = obj
   return request({
-    url: 'login',
+    url: 'menu/insert',
     method: 'post',
     data
   })
 }
-export default { login }
+export default { MenuInsert }

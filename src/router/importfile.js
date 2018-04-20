@@ -1,0 +1,1 @@
+module.exports = pathfile => require('@/views/' + pathfile + '.vue').default

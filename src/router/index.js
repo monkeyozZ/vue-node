@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import login from '@/views/login/index'
-import index from '@/components/index'
-import dashbodrd from '@/views/index/index'
-import uploadExcel from '@/views/excel/uploadExcel'
+const _import = require('./importfile')
 
 Vue.use(Router)
 
@@ -12,32 +9,48 @@ export default new Router({
     {
       path: '/',
       redirect: '/login',
-      component: login
+      component: _import('login/index')
     },
     {
       path: '/login',
       name: 'login',
-      component: login
+      component: _import('login/index')
     },
     {
       path: '/index',
-      redirect: '/dashbodrd',
-      component: index,
+      redirect: '/index/dashbodrd',
+      component: _import('main/index'),
       children: [{
-        path: '/dashbodrd',
-        name: 'dashbodrd',
-        component: dashbodrd
+        path: '/index/dashbodrd',
+        name: '/index/dashbodrd',
+        component: _import('index/index')
       }]
     },
     {
-      path: '/uploadexcel',
-      redirect: '/excel/upload',
-      component: index,
+      path: '/excel/upload',
+      component: _import('main/index'),
       children: [{
         path: '/excel/upload',
         name: 'uploadExcel',
-        component: uploadExcel
+        component: _import('excel/uploadExcel')
       }]
+    },
+
+    {
+      path: '/menu/index',
+      component: _import('main/index'),
+      children: [
+        {
+          path: '/menu/index',
+          name: 'menuIndex',
+          component: _import('menu/index')
+        },
+        {
+          path: '/menu/insert',
+          name: 'MenuInsert',
+          component: _import('menu/insert')
+        }
+      ]
     }
   ]
 })

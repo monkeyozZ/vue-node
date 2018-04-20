@@ -28,14 +28,15 @@
 </template>
 
 <script>
-import { login } from '@/api/login'
+import {mapActions} from 'vuex'
 export default {
   name: 'login',
   data () {
     return {
       loginForm: {
         username: null,
-        password: null
+        password: null,
+        ipObj: null
       },
       rules: {
         username: [
@@ -58,29 +59,49 @@ export default {
         this.passwordType = 'password'
       }
     },
+    ...mapActions({
+      Signin: 'Signin'
+    }),
     handleLogin () {
       this.$refs.loginForm.validate((res) => {
         if (!res) {
           return false
         } else {
+          this.loginForm.ipObj = window.returnCitySN
           this.loading = true
           this.text = '登录中...'
-          login(this.loginForm.username, this.loginForm.password).then(res => {
-            if (res.data.status === 0) {
-              this.$message({
-                message: res.data.message,
-                type: 'success',
-                duration: 1 * 1000
-              })
-              setTimeout(() => {
-                this.$router.push({ path: 'dashbodrd' })
+          this.Signin(this.loginForm)
+            .then((res) => {
+              if (res.data.status === -100 || res.data.status === -200 || res.data.status === -300) {
+                this.$message({
+                  message: res.data.message,
+                  type: 'error',
+                  duration: 1 * 1000
+                })
                 this.loading = false
                 this.text = '登录'
-              }, 1000)
-            }
-          }).catch(err => {
-            console.log(err)
-          })
+              } else if (res.data.status === 200) {
+                this.$message({
+                  message: res.data.message,
+                  type: 'success',
+                  duration: 1 * 1000
+                })
+                setTimeout(() => {
+                  this.$router.push({ path: 'dashbodrd' })
+                  this.loading = false
+                  this.text = '登录'
+                }, 1000)
+              }
+            })
+            .catch((err) => {
+              this.$message({
+                message: err,
+                type: 'error',
+                duration: 1 * 1000
+              })
+              this.loading = false
+              this.text = '登录'
+            })
         }
       })
     }
