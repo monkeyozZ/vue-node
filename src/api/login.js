@@ -7,4 +7,12 @@ const login = async (obj) => {
     data
   })
 }
-export default { login }
+
+const getmenu = async (userid) => {
+  return request({
+    url: 'Power/index',
+    method: 'post',
+    data: {_id: userid}
+  })
+}
+export default { login, getmenu }

@@ -1,6 +1,6 @@
 <template>
   <div>
-   <el-breadcrumb class="path">
+   <el-breadcrumb class="path" v-show="breadcrumb">
       <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>菜单管理</el-breadcrumb-item>
       <el-breadcrumb-item>添加菜单</el-breadcrumb-item>
@@ -11,7 +11,7 @@
         <el-form-item label="父级菜单" prop="parentId">
             <el-select placeholder="请选择父级菜单" v-model="Form.parentId" clearable>
               <el-option label="顶级菜单" value="0"></el-option>
-              <el-option label="区域二" value="1"></el-option>
+              <el-option :label="item.title" :value="item._id" v-if="titleArr" v-for="(item, index) in titleArr" :key="index"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="菜单名称" prop="title">
@@ -42,6 +42,7 @@
 import MenuApi from '@/api/menu'
 export default {
   name: 'MenuInsert',
+  props: ['id'],
   data () {
     return {
       Form: {
@@ -65,40 +66,133 @@ export default {
           { required: true, message: '请填写菜单排序', trigger: 'blur' },
           { type: 'number', message: '请填写数字' }
         ]
-      }
+      },
+      titleArr: [],
+      breadcrumb: true
     }
+  },
+  created () {
+    this.getTitle()
+  },
+  computed: {
+    _id: function () {
+      return this.id
+    }
+  },
+  watch: {
+    '$route': 'getTitle',
+    '_id': {
+      handler () {
+        if (this._id) {
+          this.getonelist()
+        }
+      },
+      immediate: true
+    },
+    deep: true
   },
   methods: {
     submitForm () {
       this.$refs.Form.validate((res) => {
         if (res) {
-          MenuApi.MenuInsert(this.Form).then((res) => {
-            if (res.data.status === 200) {
-              this.$notify({
-                title: '成功',
-                message: res.data.message,
-                type: 'success'
-              })
-              this.$router.push({path: '/menu/index'})
-              this.$refs.Form.resetFields()
-            } else {
-              this.$notify({
-                title: '失败',
-                message: res.data.message,
-                type: 'error'
-              })
-            }
-          })
+          if (this._id) {
+            this.MUpdate(this.Form, this._id)
+            // console.log(this.Form)
+          } else {
+            this.Minsert(this.Form)
+          }
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    Minsert (mdata) {
+      MenuApi.MenuInsert(mdata)
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.$router.push({path: '/menu/index'})
+            this.$refs.Form.resetFields()
+          } else {
+            this.$notify({
+              title: '失败',
+              message: res.data.message,
+              type: 'error'
+            })
+          }
+        })
+    },
+    MUpdate (mdata, id) {
+      MenuApi.MenuUpdate(mdata, id)
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.$emit('closeModel')
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this._id = '' // 防止再次修改这条记录时数据不同步
+          } else {
+            this.$notify({
+              title: '失败',
+              message: res.data.message,
+              type: 'error'
+            })
+          }
+        })
+        .catch((err) => {
+          this.$notify({
+            title: '失败',
+            message: err.message,
+            type: 'error'
+          })
+        })
+    },
+    getTitle () {
+      MenuApi.GetTitle()
+        .then((res) => {
+          // console.log(res)
+          if (res.data.status === 200) {
+            this.titleArr = res.data.TitleList
+            // console.log(this.titleArr)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    getonelist () {
+      MenuApi.GetOneList(this._id)
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.breadcrumb = !this.breadcrumb
+            this.Form.parentId = res.data.Onelist[0].parentId
+            this.Form.title = res.data.Onelist[0].title
+            this.Form.path = res.data.Onelist[0].path
+            this.Form.icon = res.data.Onelist[0].icon
+            this.Form.order = res.data.Onelist[0].order
+            this.Form.show = res.data.Onelist[0].show
+            // console.log(res.data.Onelist[0])
+          }
+        })
+    },
+    reset () {
+      this.$refs.Form.resetFields()
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-
+  .el-row
+    padding-top 22px
+    border 1px solid #ebebeb
+    border-radius 3px
+    transition .2s
 </style>

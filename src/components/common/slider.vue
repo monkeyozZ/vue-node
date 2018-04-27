@@ -62,6 +62,33 @@ export default {
               meta: {title: '添加菜单', hidden: false}
             }
           ]
+        },
+        {
+          meta: {icon: 'power', title: '权限管理', hidden: false},
+          children: [
+            {
+              path: '/power/index',
+              meta: {title: '权限列表', hidden: false}
+            },
+            {
+              path: '/power/insert',
+              meta: {title: '添加权限', hidden: false}
+            },
+            {
+              path: '/role',
+              meta: {icon: 'role', title: '角色管理', hidden: false},
+              children: [
+                {
+                  path: 'role/index',
+                  meta: {title: '角色列表', hidden: false}
+                },
+                {
+                  path: 'role/insert',
+                  meta: {title: '添加角色', hidden: false}
+                }
+              ]
+            }
+          ]
         }
       ]
     }

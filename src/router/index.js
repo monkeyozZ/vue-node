@@ -1,11 +1,34 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-const _import = require('./importfile')
+import staticRouters from './staticRouters'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
+/* const staticRouters = [
+  {
+    path: '/',
+    redirect: '/login',
+    component: LoadComponent('login/index')
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoadComponent('login/index')
+  },
+  {
+    path: '/index',
+    redirect: '/index/dashbodrd',
+    component: main,
+    children: [{
+      path: '/index/dashbodrd',
+      name: '/index/dashbodrd',
+      component: LoadComponent('index/index')
+    }]
+  }
+] */
+
+const router = new Router({
+  /* routes: [
     {
       path: '/',
       redirect: '/login',
@@ -52,5 +75,9 @@ export default new Router({
         }
       ]
     }
-  ]
+  ] */
+  mode: 'history',
+  routes: staticRouters
 })
+
+export default router

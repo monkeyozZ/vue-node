@@ -87,7 +87,7 @@ export default {
                   duration: 1 * 1000
                 })
                 setTimeout(() => {
-                  this.$router.push({ path: 'dashbodrd' })
+                  this.$router.push({ path: 'index' })
                   this.loading = false
                   this.text = '登录'
                 }, 1000)
