@@ -38,12 +38,6 @@ class Menu extends Base {
           if (item.icon) {
             obj['icon'] = item.icon
           }
-          item.meta = [obj]
-          // this.del(item, ['title', 'icon', 'show', 'order', 'parentId', '_id'])
-          item.children = MenuManage.find({ parentId: item._id }).sort({ order: 1 })
-          // console.log(item.children)
-        })
-        res.send(list[0].children)
       }
     } catch (err) {
       throw err
