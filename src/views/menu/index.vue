@@ -10,7 +10,6 @@
       :props="defaultProps"
       accordion
       :default-expand-all="true"
-      :expand-on-click-node="false"
       :render-content="renderContent"
     >
     </el-tree>
