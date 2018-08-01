@@ -28,6 +28,14 @@ const authToken = {
     })
   },
 
+  setRoleId: function (token) {
+    // 设置token，并填写有效期
+    var maxAge = new Date(new Date().getTime() + 30 * 1000)
+    Cookies.set('role_id', token, {
+      expires: maxAge
+    })
+  },
+
   // 设置登录状态
   setLoginStatus: function () {
     // 设置超时登录时间，在该时间范围内没有任何请求操作则自动删除

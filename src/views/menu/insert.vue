@@ -75,16 +75,14 @@ export default {
     this.getTitle()
   },
   computed: {
-    _id: function () {
-      return this.id
-    }
   },
   watch: {
     '$route': 'getTitle',
-    '_id': {
+    id: {
       handler () {
-        if (this._id) {
+        if (this.id) {
           this.getonelist()
+          // this.getTitle()
         }
       },
       immediate: true
@@ -95,8 +93,8 @@ export default {
     submitForm () {
       this.$refs.Form.validate((res) => {
         if (res) {
-          if (this._id) {
-            this.MUpdate(this.Form, this._id)
+          if (this.id) {
+            this.MUpdate(this.Form, this.id)
             // console.log(this.Form)
           } else {
             this.Minsert(this.Form)
@@ -117,7 +115,6 @@ export default {
               type: 'success'
             })
             this.$router.push({path: '/menu/index'})
-            this.$refs.Form.resetFields()
           } else {
             this.$notify({
               title: '失败',
@@ -137,7 +134,8 @@ export default {
               message: res.data.message,
               type: 'success'
             })
-            this._id = '' // 防止再次修改这条记录时数据不同步
+            this.$emit('initid')// 防止再次修改这条记录时数据不同步
+            this.$emit('initdata')
           } else {
             this.$notify({
               title: '失败',
@@ -155,6 +153,9 @@ export default {
         })
     },
     getTitle () {
+      setTimeout(() => {
+        this.$refs.Form.resetFields()
+      }, 20)
       MenuApi.GetTitle()
         .then((res) => {
           // console.log(res)
@@ -168,10 +169,9 @@ export default {
         })
     },
     getonelist () {
-      MenuApi.GetOneList(this._id)
+      MenuApi.GetOneList(this.id)
         .then((res) => {
           if (res.data.status === 200) {
-            this.breadcrumb = !this.breadcrumb
             this.Form.parentId = res.data.Onelist[0].parentId
             this.Form.title = res.data.Onelist[0].title
             this.Form.path = res.data.Onelist[0].path
@@ -184,6 +184,12 @@ export default {
     },
     reset () {
       this.$refs.Form.resetFields()
+    },
+    hidetreenav () {
+      this.breadcrumb = false
+    },
+    showtreenav () {
+      this.breadcrumb = false
     }
   }
 }

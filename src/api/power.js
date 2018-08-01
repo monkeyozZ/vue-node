@@ -13,4 +13,34 @@ const powerindex = async () => {
     method: 'get'
   })
 }
-export default { insertpower, powerindex }
+
+const powerUpdate = async (obj, id) => {
+  const data = obj
+  return request({
+    url: 'Power/update/' + id,
+    method: 'post',
+    data
+  })
+}
+
+const GetOneList = async (id) => {
+  return request({
+    url: 'Power/index',
+    method: 'post',
+    data: {
+      _id: id
+    }
+  })
+}
+
+const DelOnepower = async (id) => {
+  return request({
+    url: 'Power/delete',
+    method: 'post',
+    data: {
+      _id: id
+    }
+  })
+}
+
+export default { insertpower, powerindex, powerUpdate, GetOneList, DelOnepower }

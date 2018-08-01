@@ -5,7 +5,7 @@ const userInfo = new Schema({
   password: String,
   mobile: String,
   status: Number,
-  roleld: String,
+  roleId: String,
   roleName: String,
   currentLogin: String,
   headImgSrc: String,

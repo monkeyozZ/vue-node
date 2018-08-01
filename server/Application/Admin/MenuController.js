@@ -13,7 +13,7 @@ class Menu extends Base {
   async insert (req, res, next) {
     const menuarr = req.body
     const powerUrl = {
-      'title': req.body.title,
+      'title': req.body.title + '权限',
       'path': req.body.path,
       'version': req.body.version
     }
@@ -91,7 +91,8 @@ class Menu extends Base {
       }
       res.send({
         status: 200,
-        MenuTree: delother(response)})
+        MenuTree: delother(response)
+      })
     })
   }
 
@@ -100,7 +101,7 @@ class Menu extends Base {
     const menuarr = req.body
     let beforeUrl = ''
     const powerUrl = {
-      'title': req.body.title,
+      'title': req.body.title + '权限',
       'path': req.body.path,
       'version': req.body.version
     }
@@ -165,39 +166,24 @@ class Menu extends Base {
         }
         return pathArr
       }
-      /*  let lastres1 = await GetDelId(CurrentId._id).then((response) => {
-        if (response.length !== 0) {
-          FindDelPowerArr(response).then((response1) => {
-            // console.log(response1)
-            Delpowertree(response1).then((response3) => {
-              return response3.every((item, index, array) => {
-                return (item.n === '1')
-              })
-            })
-          })
-        }
-      }).catch((err) => {
-        console.log(err)
-      })
-      console.log(lastres1) */
-
       await GetDelId(CurrentId._id).then(async (response) => {
         if (response.length !== 0) {
           let lastres1 = await FindDelPowerArr(response).then((response1) => {
             return Delpowertree(response1).then((response3) => {
               return response3.every((item, index, array) => {
-                return (item.n == 1)
+                console.log(item)
+                return (parseInt(item.n) === 1)
               })
             })
           })
           let lastres2 = await Deltree(response).then((response4) => {
             return response4.every((item, index, array) => {
-              return (item.n == 1)
+              return (parseInt(item.n) === 1)
             })
 
             // console.log(result)
           })
-          console.log('1:' + lastres1, '2:' + lastres2)
+          // console.log('1:' + lastres1, '2:' + lastres2)
           if (lastres1 && lastres2) {
             res.send({
               status: 200,

@@ -4,21 +4,21 @@
         <template v-if="!item.children&&!item.meta.hidden">
             <el-menu-item :index="item.path" :key="index">
               <svg-icon  :icon-class="item.meta.icon"></svg-icon>
-              <span slot="title">{{item.meta.title}}</span>
-              </el-menu-item>
+              <span slot="title" style="margin-left:10px">{{item.meta.title}}</span>
+            </el-menu-item>
         </template>
 
         <template v-else-if="item.children&&!item.meta.hidden">
         <el-submenu :key="index" :index="item.meta.title || item.path">
           <template slot="title" >
             <svg-icon  :icon-class="item.meta.icon"></svg-icon>
-            <span slot="title">{{item.meta.title}}</span>
+            <span slot="title" style="margin-left:10px">{{item.meta.title}}</span>
           </template>
 
           <template v-for="(child, index) in item.children">
             <template>
               <template  v-if="!child.children&&!child.meta.hidden">
-                  <el-menu-item :index="child.path" :key="index">{{child.meta.title}}</el-menu-item>
+                  <el-menu-item :index="item.path + '/' + child.path" :key="index" style="text-align:center">{{child.meta.title}}</el-menu-item>
               </template>
               <menu-item v-else :key="index" :routers="[child]"></menu-item>
             </template>

@@ -14,7 +14,7 @@
     >
     </el-tree>
     <el-dialog title="修改菜单" :visible.sync="dialogFormVisible" @close="remove">
-      <v-edit :id="id" ref="reset" v-on:closeModel="closemodel"></v-edit>
+      <v-edit :id="id" @initid="initid" @initdata="GetList" ref="reset" v-on:closeModel="closemodel"></v-edit>
     </el-dialog>
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
         label: 'meta'
       },
       dialogFormVisible: false,
-      id: null,
+      id: '',
       isdel: false
     }
   },
@@ -44,7 +44,20 @@ export default {
   watch: {
     // 如果路由有变化，会再次执行该方法
     '$route': 'GetList',
-    'dialogFormVisible': 'GetList',
+    'dialogFormVisible': {
+      handler () {
+        // this.GetList()
+        if (this.dialogFormVisible === true) {
+          setTimeout(() => {
+            this.$refs.reset.hidetreenav()
+          }, 20)
+        } else {
+          setTimeout(() => {
+            this.$refs.reset.showtreenav()
+          }, 20)
+        }
+      }
+    },
     'isdel': 'GetList'
   },
   methods: {
@@ -97,6 +110,9 @@ export default {
     closemodel () {
       this.dialogFormVisible = false
       this.$refs.reset.reset()
+    },
+    initid () {
+      this.id = ''
     },
 
     renderContent (h, { node, data, store }) {

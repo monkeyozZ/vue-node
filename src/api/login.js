@@ -8,11 +8,20 @@ const login = async (obj) => {
   })
 }
 
-const getmenu = async (userid) => {
+const getroleid = async (userid) => {
   return request({
-    url: 'Power/index',
+    url: 'Power/roleid',
     method: 'post',
-    data: {_id: userid}
+    data: { _id: userid }
   })
 }
-export default { login, getmenu }
+
+const getmenu = async (roleid) => {
+  return request({
+    url: 'Power/routelist',
+    method: 'post',
+    data: { roleid: roleid }
+  })
+}
+
+export default { login, getmenu, getroleid }

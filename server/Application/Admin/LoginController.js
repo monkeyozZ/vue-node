@@ -60,10 +60,6 @@ class Login extends Base {
       })
     }
   }
-
-  async register (req, res, next) {
-
-  }
 }
 
 export default new Login()

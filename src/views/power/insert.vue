@@ -29,6 +29,7 @@
 <script>
 import PowerApi from '@/api/power'
 export default {
+  props: ['id'],
   data () {
     return {
       Form: {
@@ -51,7 +52,11 @@ export default {
     submitForm () {
       this.$refs.Form.validate((res) => {
         if (res) {
-          this.Powerinsert(this.Form)
+          if (this.id) {
+            this.powerUpdate(this.Form, this.id)
+          } else {
+            this.Powerinsert(this.Form)
+          }
         }
       })
     },
@@ -73,7 +78,67 @@ export default {
           })
         }
       })
+    },
+    powerUpdate (mdata, id) {
+      PowerApi.powerUpdate(mdata, id)
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.$emit('closeModel')
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.$emit('initid') // 防止再次修改这条记录时数据不同步
+            this.$emit('initdata')
+          } else {
+            this.$notify({
+              title: '失败',
+              message: res.data.message,
+              type: 'error'
+            })
+          }
+        })
+        .catch((err) => {
+          this.$notify({
+            title: '失败',
+            message: err.message,
+            type: 'error'
+          })
+        })
+    },
+    getonelist () {
+      PowerApi.GetOneList(this.id)
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.breadcrumb = !this.breadcrumb
+            this.Form.title = res.data.Onelist[0].title
+            this.Form.path = res.data.Onelist[0].path
+            this.Form.version = res.data.Onelist[0].version
+            // console.log(res.data.Onelist[0])
+          }
+        })
+    },
+    reset () {
+      this.$refs.Form.resetFields()
+    },
+    hidetreenav () {
+      this.breadcrumb = false
+    },
+    showtreenav () {
+      this.breadcrumb = false
     }
+  },
+  watch: {
+    id: {
+      handler () {
+        if (this.id) {
+          this.getonelist()
+        }
+      },
+      immediate: true
+    },
+    deep: true
   }
 }
 </script>

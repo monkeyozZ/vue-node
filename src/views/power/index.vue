@@ -1,5 +1,13 @@
 <template>
+<div>
+  <el-breadcrumb class="path" v-show="breadcrumb">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>权限管理</el-breadcrumb-item>
+      <el-breadcrumb-item>权限列表</el-breadcrumb-item>
+  </el-breadcrumb>
+
   <el-table
+    v-loading="loading"
     :data="powerlist"
     border>
     <el-table-column
@@ -23,40 +31,107 @@
       <template slot-scope="scope">
         <el-button
           size="mini"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          @click="handleEdit(scope.row._id)">编辑</el-button>
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          @click="handleDelete(scope.row._id)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
+  <el-dialog title="修改权限" :visible.sync="dialogFormVisible" @close="remove">
+      <v-edit :id="id" @initid="initid" @initdata="getpowerlist" ref="reset" v-on:closeModel="closemodel"></v-edit>
+  </el-dialog>
+</div>
 </template>
 
 <script>
 import powerApi from '@/api/power'
+import edit from './insert'
 export default {
+  components: {
+    'v-edit': edit
+  },
   data () {
     return {
-      powerlist: []
+      breadcrumb: true,
+      powerlist: [],
+      loading: false,
+      dialogFormVisible: false,
+      id: '',
+      isdel: false
     }
   },
   methods: {
     getpowerlist () {
+      this.loading = true
       powerApi.powerindex().then((res) => {
         if (res.data.status === 200) {
           this.powerlist = res.data.powerlist
+          this.loading = false
         }
       })
     },
-    handleEdit (index, row) {
-      console.log(index, row)
+    handleEdit (powerid) {
+      this.dialogFormVisible = true
+      this.id = powerid
     },
-    handleDelete (index, row) {
-      console.log(index, row)
+    handleDelete (powerid) {
+      this.$confirm('确定要删除该权限吗？', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        powerApi.DelOnepower(powerid)
+          .then((res) => {
+            if (res.data.status === 200) {
+              this.isdel = !this.isdel
+              this.$notify({
+                title: '成功',
+                message: res.data.message,
+                type: 'success'
+              })
+            } else {
+              this.$notify({
+                title: '失败',
+                message: res.data.message,
+                type: 'error'
+              })
+            }
+          })
+      })
+    },
+    remove () {
+      this.$refs.reset.reset()
+      this.id = ''
+    },
+    closemodel () {
+      this.dialogFormVisible = false
+      this.id = ''
+      this.$refs.reset.reset()
+    },
+    initid () {
+      this.id = ''
     }
   },
-  beforeMount () {
+  watch: {
+    '$route': 'getpowerlist',
+    'dialogFormVisible': {
+      handler () {
+        if (this.dialogFormVisible === true) {
+          setTimeout(() => {
+            this.$refs.reset.hidetreenav()
+          }, 20)
+        } else {
+          setTimeout(() => {
+            this.$refs.reset.showtreenav()
+          }, 20)
+        }
+      }
+    },
+    'isdel': 'getpowerlist'
+  },
+  mounted () {
     this.getpowerlist()
   }
 }

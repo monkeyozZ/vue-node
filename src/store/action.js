@@ -24,8 +24,15 @@ export const setId = ({ commit }, UserId) => {
   commit(types.SET_USERID, UserId)
 }
 
-export const GetMenuList = async ({ commit }, UserId) => {
-  loginApi.getmenu(UserId).then(res => {
+export const setroleid = async ({ commit }, userid) => {
+  await loginApi.getroleid(userid).then((response) => {
+    commit(types.GET_ROLEID, response.data.roleId)
+    Auth.setRoleId(response.data.roleId)
+  })
+}
+
+export const GetMenuList = async ({ commit }, roleid) => {
+  loginApi.getmenu(roleid).then(res => {
     if (res.data.status === 200) {
       commit(types.GET_MENU_LIST, res.data.menulist)
     }
